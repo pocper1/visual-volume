@@ -1,1 +1,26 @@
-# visual-volume
+# Vesuvius Challenge 3D visualization
+> 1122 台大計算機圖形 期末專案
+
+## Introduction
+1. [Vesuvius Challenge](https://scrollprize.org/)
+
+## Tech
+> WEBGL, Three.js, visualization
+1. [Three.js](https://threejs.org/)
+2. github repo:  [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor)
+
+## Steps
+1. clone this repo
+    ```bash=
+    git clone https://github.com/pocper1/visual-volume.git
+    cd Web
+    ```
+2. install dependency, `npm install`
+3. Download datasets from Vesuvius Challenge, and put into Dataset
+4. build up, `npm run dev`
+
+
+## Reference
+1. [Volume Shader](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/shaders/VolumeShader.js)
+2. Github repo: [tomhsiao1260/pipeline-visualize](https://github.com/tomhsiao1260/pipeline-visualize)
+3. Github repo: [tomhsiao1260/vc-cell](https://github.com/tomhsiao1260/vc-cell)
