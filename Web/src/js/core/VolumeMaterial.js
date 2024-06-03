@@ -1,34 +1,34 @@
-import { ShaderMaterial, Matrix4, Vector2, Vector3 } from 'three'
+import { ShaderMaterial, Matrix4, Vector2, Vector3 } from "three";
 
 export class VolumeMaterial extends ShaderMaterial {
-  constructor(params) {
-    super({
-      defines: {
-        // The maximum distance through our rendering volume is sqrt(3).
-        MAX_STEPS: 887, // 887 for 512^3, 1774 for 1024^3
-        SURFACE_EPSILON: 0.001,
-      },
+    constructor(params) {
+        super({
+            defines: {
+                // The maximum distance through our rendering volume is sqrt(3).
+                MAX_STEPS: 887, // 887 for 512^3, 1774 for 1024^3
+                SURFACE_EPSILON: 0.001,
+            },
 
-      uniforms: {
-        cmdata: { value: null },
-        labelTex: { value: null },
-        sdfTex: { value: null },
-        volumeTex: { value: null },
-        clim: { value: new Vector2(0.4, 1.0) },
-        size: { value: new Vector3() },
-        projectionInverse: { value: new Matrix4() },
-        sdfTransformInverse: { value: new Matrix4() },
-        segmentVisible: { value: true },
-        sliceVisible: { value: true },
-        labelVisible: { value: true },
-        slice: { value: new Vector3() },
-        colorful: { value: true },
-        surface: { value: 0 },
-        label: { value: 0 },
-        tlabel: { value: 0 },
-      },
+            uniforms: {
+                cmdata: { value: null },
+                labelTex: { value: null },
+                sdfTex: { value: null },
+                volumeTex: { value: null },
+                clim: { value: new Vector2(0.4, 1.0) },
+                size: { value: new Vector3() },
+                projectionInverse: { value: new Matrix4() },
+                sdfTransformInverse: { value: new Matrix4() },
+                segmentVisible: { value: true },
+                sliceVisible: { value: true },
+                labelVisible: { value: true },
+                slice: { value: new Vector3() },
+                colorful: { value: true },
+                surface: { value: 0 },
+                label: { value: 0 },
+                tlabel: { value: 0 },
+            },
 
-      vertexShader: /* glsl */ `
+            vertexShader: /* glsl */ `
         varying vec2 vUv;
 
         void main() {
@@ -37,7 +37,7 @@ export class VolumeMaterial extends ShaderMaterial {
         }
         `,
 
-      fragmentShader: /* glsl */ `
+            fragmentShader: /* glsl */ `
         precision highp sampler3D;
 
         uniform bool segmentVisible;
@@ -254,6 +254,6 @@ export class VolumeMaterial extends ShaderMaterial {
           return apply_colormap(max_val);
         }
       `,
-    })
-  }
+        });
+    }
 }

@@ -19,6 +19,9 @@
 3. Download datasets from Vesuvius Challenge, and put into Dataset
 4. build up, `npm run dev`
 
+## notes
+1. transform_obj from origin.tif to origin.obj
+
 
 ## Reference
 1. [Volume Shader](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/shaders/VolumeShader.js)
