@@ -2,3 +2,10 @@
 /output/*
 */node_modules/*
 *tif
+*.pt
+*.obj
+*.ply
+*.mp4
+*.nrrd
+*.vtk
+

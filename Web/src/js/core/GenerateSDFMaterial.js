@@ -1,15 +1,15 @@
-import { ShaderMaterial } from 'three'
+import { ShaderMaterial } from "three";
 
 export class GenerateSDFMaterial extends ShaderMaterial {
-  constructor(params) {
-    super({
-      defines: {},
+    constructor(params) {
+        super({
+            defines: {},
 
-      uniforms: {
-        sliceData: { value: null },
-      },
+            uniforms: {
+                sliceData: { value: null },
+            },
 
-      vertexShader: /* glsl */ `
+            vertexShader: /* glsl */ `
         varying vec2 vUv;
 
         void main() {
@@ -19,7 +19,7 @@ export class GenerateSDFMaterial extends ShaderMaterial {
         }
         `,
 
-      fragmentShader: /* glsl */ `
+            fragmentShader: /* glsl */ `
         varying vec2 vUv;
         uniform sampler2D sliceData;
 
@@ -28,6 +28,6 @@ export class GenerateSDFMaterial extends ShaderMaterial {
             gl_FragColor = texture2D(sliceData, vUv);
         }
         `,
-    })
-  }
+        });
+    }
 }
