@@ -23,6 +23,9 @@ export class VolumeMaterial extends ShaderMaterial {
                 colorMode: { value: 0 },
                 // rotationMatrix: { value: new Matrix4() },
                 // modelMatrix: { value: new Matrix4() },
+                axis: { value: 0 }, // 新增 axis uniform
+                depth: { value: 0.5 }, // 新增 depth uniform
+                displayMode: { value: 0 },
             },
 
             vertexShader: vertexShader,
