@@ -9,22 +9,26 @@ export default class ViewerCore {
     constructor({ renderer, canvas }) {
         this.canvas = canvas;
         this.renderer = renderer;
+
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onWindowResize = this.onWindowResize.bind(this);
         this.render = this.render.bind(this);
+        this.sdfTexGenerate = this.sdfTexGenerate.bind(this);
 
         this.inverseBoundsMatrix = new THREE.Matrix4();
         this.volumePass = new FullScreenQuad(new VolumeMaterial()); // full screen quad 佔滿頁面的四邊形
-        // this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 1.0), new THREE.MeshBasicMaterial());
+        this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 1.0), new THREE.MeshBasicMaterial());
         this.cmtextures = { viridis: new THREE.TextureLoader().load(textureViridis) };
 
         this.params = {};
-
         this.params.colorful = true;
-
         this.params.tifName = "cell_yxz_006_008_004"; // fileName
         this.params.functionName = "origin";
-
         this.params.backgroundColor = "#000000";
         this.params.colorMode = 0; // 預設顏色顯示模式
+        this.params.axis = 0; // 預設 axis
+        this.params.depth = 0.5; // 預設 depth
+        this.params.displayMode = 0;
 
         // this.params.animate = true; // 新增動畫開關
         // this.params.rotationSpeed = 0.1; // 新增旋轉速度
@@ -33,6 +37,10 @@ export default class ViewerCore {
         // this.params.modelMatrix = new THREE.Matrix4();
 
         this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
+        this.volumePass.material.uniforms.axis.value = this.params.axis;
+        this.volumePass.material.uniforms.depth.value = this.params.depth;
+        this.volumePass.material.uniforms.displayMode.value = this.params.displayMode;
+
         // this.volumePass.material.uniforms.rotationMatrix = { value: new THREE.Matrix4() };
 
         // Initialize last time and last angle
@@ -43,8 +51,6 @@ export default class ViewerCore {
     }
 
     async init() {
-        this.showLoading();
-
         // scene setup
         this.scene = new THREE.Scene();
         // this.scene.add(this.cube);
@@ -56,16 +62,19 @@ export default class ViewerCore {
         this.camera.far = 5;
         this.camera.updateProjectionMatrix();
 
-        window.addEventListener(
-            "resize",
-            () => {
-                this.camera.aspect = window.innerWidth / window.innerHeight;
-                this.camera.updateProjectionMatrix();
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.render();
-            },
-            false
-        );
+        // window.addEventListener(
+        //     "resize",
+        //     () => {
+        //         this.camera.aspect = window.innerWidth / window.innerHeight;
+        //         this.camera.updateProjectionMatrix();
+        //         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        //         this.render();
+        //     },
+        //     false
+        // );
+
+        window.addEventListener("resize", this.onWindowResize, false); // 綁定 window resize 事件
+        this.canvas.addEventListener("mousemove", this.onMouseMove, false); // 設置滑鼠移動事件監聽
 
         const controls = new OrbitControls(this.camera, this.canvas);
         controls.addEventListener("change", this.render);
@@ -75,13 +84,32 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
 
         await this.sdfTexGenerate();
-        this.hideLoading();
         // this.animate();
     }
 
-    async sdfTexGenerate() {
-        this.showLoading();
+    onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.render();
+    }
+    
+    onMouseMove(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
 
+        if (x < 0.1 || x > 0.9 || y < 0.1 || y > 0.9) {
+            this.params.displayMode = 1;
+        } else {
+            this.params.displayMode = 0;
+        }
+
+        this.volumePass.material.uniforms.displayMode.value = this.params.displayMode;
+        this.render();
+    }
+
+    async sdfTexGenerate() {
         const safePath = this.safeJoin(this.params.tifName, this.params.functionName + ".nrrd");
         const volume = await new NRRDLoader().loadAsync(safePath);
 
@@ -108,7 +136,6 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.size.value.set(w, h, d);
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
         // this.volumePass.material.uniforms.functionName.value = this.getFunctionIndex(functionName);
-        this.hideLoading();
         this.render();
     }
 
@@ -128,28 +155,26 @@ export default class ViewerCore {
 
         this.volumePass.material.uniforms.colorful.value = this.params.colorful;
         this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
-
+        this.volumePass.material.uniforms.axis.value = this.params.axis; // 設定 axis
+        this.volumePass.material.uniforms.depth.value = this.params.depth; // 設定 depth
+        this.volumePass.material.uniforms.displayMode.value = this.params.displayMode;
         this.camera.updateMatrixWorld();
 
         // 計算位置資訊
         this.volumePass.material.uniforms.projectionInverse.value.copy(this.camera.projectionMatrixInverse);
         this.volumePass.material.uniforms.sdfTransformInverse.value.copy(new THREE.Matrix4()).invert().premultiply(this.inverseBoundsMatrix).multiply(this.camera.matrixWorld);
 
+        console.log('Rendering with the following uniforms:', {
+            colorful: this.volumePass.material.uniforms.colorful.value,
+            colorMode: this.volumePass.material.uniforms.colorMode.value,
+            axis: this.volumePass.material.uniforms.axis.value,
+            depth: this.volumePass.material.uniforms.depth.value,
+            displayMode: this.volumePass.material.uniforms.displayMode.value,
+            projectionInverse: this.volumePass.material.uniforms.projectionInverse.value,
+            sdfTransformInverse: this.volumePass.material.uniforms.sdfTransformInverse.value,
+        });
+        
         this.volumePass.render(this.renderer);
-    }
-
-    showLoading() {
-        const loadingElement = document.getElementById("loading");
-        if (loadingElement) {
-            loadingElement.style.display = "block";
-        }
-    }
-
-    hideLoading() {
-        const loadingElement = document.getElementById("loading");
-        if (loadingElement) {
-            loadingElement.style.display = "none";
-        }
     }
 
     // animate() {
