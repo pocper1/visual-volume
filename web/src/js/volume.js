@@ -2,7 +2,8 @@ import * as THREE from "three";
 import ViewerCore from "./core/ViewerCore";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
 
-const input_files = ["origin", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
+const functionName = ["origin", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
+const tifName = ["cell_yxz_006_008_004", "cell_yxz_007_006_022", "cell_yxz_008_010_005", "cell_yxz_010_011_003", "cell_yxz_015_013_008"];
 init();
 
 async function init() {
@@ -23,15 +24,16 @@ function update(viewer) {
     viewer.render();
     updateGUI(viewer);
     console.log(viewer.params);
-    console.log(viewer.params.functions);
 }
 
 function updateGUI(viewer) {
     const gui = new GUI();
-    const background = gui.addFolder("Background");
-    const object = gui.addFolder("object");
+    const fileSystem = gui.addFolder("File System");
+    const background = gui.addFolder("Background Color");
+    const object = gui.addFolder("Object");
+    // const animation = gui.addFolder("Animation");
 
-    // background color
+    // =====================================BACKGROUND======================================================
     background
         .addColor(viewer.params, "backgroundColor")
         .name("Background Color")
@@ -40,17 +42,62 @@ function updateGUI(viewer) {
             viewer.render();
         });
 
-    // ===========================================================================================
+    // =====================================OBJECT======================================================
     // object color
     object.add(viewer.params, "colorful", true).name("color").onChange(viewer.render);
 
-    // object functions
     object
-        .add(viewer.params, "functions", input_files)
-        .name("functions")
+        .add(viewer.params, "colorMode", { Origin: 0, "RGB to BGR": 1, "reverse color": 2, "gray scale": 3, "Hue Rotation": 4, "Contrast Enhancement": 5 })
+        .name("Color Mode")
+        .onChange(function (value) {
+            viewer.volumePass.material.uniforms.colorMode.value = value;
+            viewer.render();
+        });
+
+    // animation
+    //     .add(viewer.params, "animate")
+    //     .name("Animate")
+    //     .onChange(function (value) {
+    //         viewer.params.animate = value;
+    //         viewer.render();
+    //     });
+
+    // animation
+    //     .add(viewer.params, "rotationSpeed", 0, 1)
+    //     .step(0.1)
+    //     .name("Rotation Speed")
+    //     .onChange(function (value) {
+    //         viewer.params.rotationSpeed = value;
+    //         viewer.render();
+    //     });
+
+    // animation
+    //     .add(viewer.params, "rotationAxis", ["x", "y", "z"])
+    //     .name("Rotation Axis")
+    //     .onChange(function (value) {
+    //         viewer.params.rotationAxis = value;
+    //         viewer.render();
+    //     });
+
+    // =====================================FILE SYSTEM======================================================
+
+    fileSystem
+        .add(viewer.params, "tifName", tifName)
+        .name("tifName")
         .onChange(async function (value) {
             //載入新檔案
             await viewer.sdfTexGenerate(value);
+
+            // 重新渲染
+            viewer.render();
+        });
+
+    fileSystem
+        .add(viewer.params, "functionName", functionName)
+        .name("functionName")
+        .onChange(async function (functionName) {
+            //載入新檔案
+            await viewer.sdfTexGenerate(functionName);
 
             // 重新渲染
             viewer.render();
