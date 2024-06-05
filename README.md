@@ -4,6 +4,11 @@
 ## Introduction
 1. [Vesuvius Challenge](https://scrollprize.org/)
 ```
+wget --no-parent -r --user=<user name> --password=<password> https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/cell_yxz_006_008_004.tif
+
+```
+
+```
 python3 surface_detection.py cell_yxz_001_001_002.tif
 ```
 ## Tech

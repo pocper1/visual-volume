@@ -13,26 +13,41 @@ export default class ViewerCore {
 
         this.inverseBoundsMatrix = new THREE.Matrix4();
         this.volumePass = new FullScreenQuad(new VolumeMaterial()); // full screen quad 佔滿頁面的四邊形
-        this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 1.0), new THREE.MeshBasicMaterial());
+        // this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 1.0), new THREE.MeshBasicMaterial());
         this.cmtextures = { viridis: new THREE.TextureLoader().load(textureViridis) };
 
         this.params = {};
 
-        this.params.showAxes = true;
         this.params.colorful = true;
-        this.params.functions = "origin";
-        this.params.backgroundColor = "#000000";
 
-        this.params.opacity = 1;
-        this.params.color = { r: 255, g: 255, b: 255 };
+        this.params.tifName = "cell_yxz_006_008_004"; // fileName
+        this.params.functionName = "origin";
+
+        this.params.backgroundColor = "#000000";
+        this.params.colorMode = 0; // 預設顏色顯示模式
+
+        // this.params.animate = true; // 新增動畫開關
+        // this.params.rotationSpeed = 0.1; // 新增旋轉速度
+        // this.params.rotationAxis = "y"; // 新增旋轉軸
+        // this.params.rotationMatrix = new THREE.Matrix4();
+        // this.params.modelMatrix = new THREE.Matrix4();
+
+        this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
+        // this.volumePass.material.uniforms.rotationMatrix = { value: new THREE.Matrix4() };
+
+        // Initialize last time and last angle
+        // this.lastTime = Date.now();
+        // this.lastAngle = 0;
 
         this.init();
     }
 
     async init() {
+        this.showLoading();
+
         // scene setup
         this.scene = new THREE.Scene();
-        this.scene.add(this.cube);
+        // this.scene.add(this.cube);
 
         // camera setup
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 50);
@@ -59,11 +74,16 @@ export default class ViewerCore {
         this.cmtextures.viridis.maxFilter = THREE.NearestFilter;
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
 
-        this.sdfTexGenerate(this.params.functions);
+        await this.sdfTexGenerate();
+        this.hideLoading();
+        // this.animate();
     }
 
-    async sdfTexGenerate(value) {
-        const volume = await new NRRDLoader().loadAsync(value + ".nrrd");
+    async sdfTexGenerate() {
+        this.showLoading();
+
+        const safePath = this.safeJoin(this.params.tifName, this.params.functionName + ".nrrd");
+        const volume = await new NRRDLoader().loadAsync(safePath);
 
         const { xLength: w, yLength: h, zLength: d } = volume;
 
@@ -87,32 +107,27 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.volumeTex.value = volumeTex;
         this.volumePass.material.uniforms.size.value.set(w, h, d);
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
-        this.volumePass.material.uniforms.functions.value = this.getFunctionIndex(value);
-        this.render();
-    }
-
-    updateRGBColor() {
-        const color = this.params.color;
-        this.cube.material.color.setRGB(color.r / 255, color.g / 255, color.b / 255);
-        this.render();
-    }
-
-    updateObjectOpacity(opacity) {
-        this.params.opacity = opacity;
-        this.volumePass.material.uniforms.volumeOpacity.value = opacity;
+        // this.volumePass.material.uniforms.functionName.value = this.getFunctionIndex(functionName);
+        this.hideLoading();
         this.render();
     }
 
     getFunctionIndex(name) {
-        const input_files = ["origin", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
+        const input_files = ["Normal", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
         return input_files.indexOf(name);
     }
+
+    safeJoin(base, target) {
+        return base + "/" + target.replace(/^\//, "");
+    }
+
     render() {
         if (!this.renderer) return;
 
         // this.renderer.render(this.scene, this.camera);
 
         this.volumePass.material.uniforms.colorful.value = this.params.colorful;
+        this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
 
         this.camera.updateMatrixWorld();
 
@@ -122,4 +137,48 @@ export default class ViewerCore {
 
         this.volumePass.render(this.renderer);
     }
+
+    showLoading() {
+        const loadingElement = document.getElementById("loading");
+        if (loadingElement) {
+            loadingElement.style.display = "block";
+        }
+    }
+
+    hideLoading() {
+        const loadingElement = document.getElementById("loading");
+        if (loadingElement) {
+            loadingElement.style.display = "none";
+        }
+    }
+
+    // animate() {
+    //     requestAnimationFrame(this.animate.bind(this));
+
+    //     const currentTime = Date.now();
+    //     const passtime = (currentTime - this.lastTime) / 1000; // seconds
+    //     this.lastTime = currentTime;
+
+    //     if (this.params.animate) {
+    //         const axis = this.params.rotationAxis;
+    //         const speed = this.params.rotationSpeed;
+    //         const fixtedDegree = 2 * Math.PI;
+
+    //         const rotationAngle = fixtedDegree * speed * passtime;
+
+    //         const rotationMatrixIncrement = new THREE.Matrix4();
+    //         if (axis === "x") {
+    //             rotationMatrixIncrement.makeRotationX(rotationAngle);
+    //         } else if (axis === "y") {
+    //             rotationMatrixIncrement.makeRotationY(rotationAngle);
+    //         } else if (axis === "z") {
+    //             rotationMatrixIncrement.makeRotationZ(rotationAngle);
+    //         }
+
+    //         this.params.modelMatrix.multiply(rotationMatrixIncrement);
+    //         this.volumePass.material.uniforms.modelMatrix.value.copy(this.params.modelMatrix);
+    //     }
+
+    //     this.render();
+    // }
 }

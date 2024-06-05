@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import nrrd
 import os
+from tqdm import tqdm
 
 def convert(input_file, output_file):
     print(f"Converting {input_file} to {output_file}")
@@ -36,9 +37,14 @@ def convert(input_file, output_file):
     nrrd.write(output_file, volumeStack_trans)
 
 if __name__ == '__main__':
-    input_folder = "../../pipeline-visualize/output/"
-    output_folder = "../web/public/"
-    pt_files = [
+    tifName = ["cell_yxz_007_006_022", "cell_yxz_008_010_005", "cell_yxz_010_011_003", "cell_yxz_015_013_008"]
+
+    
+    for file in tqdm(tifName, desc="Processing files"):
+        input_folder = "../../pipeline-visualize/output/" + file + "/"
+        output_folder = "../web/public/" + file + "/"
+
+        pt_files = [
                     input_folder + "origin.pt", 
                     input_folder + "sobel_vectors.pt", 
                     input_folder + "vector_conv.pt", 
@@ -51,7 +57,7 @@ if __name__ == '__main__':
                     input_folder + "mask_recto.pt",
                     input_folder + "mask_verso.pt"
                 ]
-    
-    for input_file in pt_files:
-        output_file = output_folder + os.path.basename(input_file).replace(".pt", ".nrrd")
-        convert(input_file, output_file)
+        
+        for input_file in tqdm(pt_files, desc=f"Processing {file}"):
+            output_file = output_folder + os.path.basename(input_file).replace(".pt", ".nrrd")
+            convert(input_file, output_file)
