@@ -536,4 +536,3 @@ if __name__ == '__main__':
     # Save point cloud
     save_ply(recto_tensor_tuple, verso_tensor_tuple, corner_coords, grid_block_size, padding=0)
 
-

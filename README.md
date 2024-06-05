@@ -3,7 +3,9 @@
 
 ## Introduction
 1. [Vesuvius Challenge](https://scrollprize.org/)
-
+```
+python3 surface_detection.py cell_yxz_001_001_002.tif
+```
 ## Tech
 > WEBGL, Three.js, visualization
 1. [Three.js](https://threejs.org/)
