@@ -26,6 +26,8 @@ export class VolumeMaterial extends ShaderMaterial {
                 axis: { value: 0 }, // 新增 axis uniform
                 depth: { value: 0.5 }, // 新增 depth uniform
                 displayMode: { value: 0 },
+                dis_vec: { value: new Vector3()  },
+                
             },
 
             vertexShader: vertexShader,
