@@ -1,6 +1,23 @@
 # Vesuvius Challenge 3D visualization
 > 1122 台大計算機圖形 期末專案
 
+以下是一個簡單的 README 範本，根據你的 repo 生成的：
+
+Visual Volume
+
+Visual Volume 是一個用於視覺化體積數據的項目。本項目利用 Web 技術（如 Three.js 和 WebGL）來渲染和展示來自 CT 掃描或其他來源的三維體積數據。
+
+功能
+
+	•	加載和解析 VTK 和 NRRD 文件
+	•	進行體積數據的渲染和顯示
+	•	支持多種視覺化模式，如等值面和體繪製
+	•	交互功能，允許用戶調整視角和視覺參數
+
+安裝
+
+	1.	克隆這個 repo：
+    
 ## Introduction
 1. [Vesuvius Challenge](https://scrollprize.org/)
 ```
