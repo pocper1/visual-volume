@@ -4,8 +4,6 @@ import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
 
 const functionName = ["origin", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
 const tifName = ["cell_yxz_006_008_004", "cell_yxz_007_006_022", "cell_yxz_008_010_005", "cell_yxz_010_011_003", "cell_yxz_015_013_008"];
-let viewer;
-
 init();
 
 async function init() {
@@ -18,8 +16,7 @@ async function init() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const viewer = new ViewerCore({ renderer, canvas });
-    viewer.canvas.addEventListener("mousemove", viewer.onMouseMove);
-    window.addEventListener("resize", viewer.onWindowResize, false);
+
     update(viewer);
 }
 
@@ -47,7 +44,7 @@ function updateGUI(viewer) {
 
     // =====================================OBJECT======================================================
     // object color
-    object.add(viewer.params, "colorful", true).name("color").onChange(viewer.render);
+    // object.add(viewer.params, "colorful", true).name("color").onChange(viewer.render);
 
     object
         .add(viewer.params, "colorMode", { Origin: 0, "RGB to BGR": 1, "reverse color": 2, "gray scale": 3, "Hue Rotation": 4, "Contrast Enhancement": 5 })
@@ -57,8 +54,6 @@ function updateGUI(viewer) {
             viewer.render();
         });
 
-    object.add(viewer.params, "axis", { X_Axis: 0, Y_Axis: 1, Z_Axis: 2 }).name("Axis").onChange(viewer.render);
-    object.add(viewer.params, "depth", 0, 1).step(0.1).name("Depth").onChange(viewer.render);
     // animation
     //     .add(viewer.params, "animate")
     //     .name("Animate")
