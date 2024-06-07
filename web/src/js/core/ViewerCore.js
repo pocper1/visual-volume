@@ -28,19 +28,7 @@ export default class ViewerCore {
         this.params.backgroundColor = "#000000";
         this.params.colorMode = 0; // 預設顏色顯示模式
 
-        // this.params.animate = true; // 新增動畫開關
-        // this.params.rotationSpeed = 0.1; // 新增旋轉速度
-        // this.params.rotationAxis = "y"; // 新增旋轉軸
-        // this.params.rotationMatrix = new THREE.Matrix4();
-        // this.params.modelMatrix = new THREE.Matrix4();
-
         this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
-        // this.volumePass.material.uniforms.rotationMatrix = { value: new THREE.Matrix4() };
-
-        // Initialize last time and last angle
-        // this.lastTime = Date.now();
-        // this.lastAngle = 0;
-
         this.init();
     }
 
@@ -132,8 +120,6 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.volumeTex.value = volumeTex;
         this.volumePass.material.uniforms.size.value.set(w, h, d);
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
-        // this.volumePass.material.uniforms.functionName.value = this.getFunctionIndex(functionName);
-        this.hideLoading();
         this.render();
     }
 
@@ -176,48 +162,4 @@ export default class ViewerCore {
 
         this.volumePass.render(this.renderer);
     }
-
-    showLoading() {
-        const loadingElement = document.getElementById("loading");
-        if (loadingElement) {
-            loadingElement.style.display = "block";
-        }
-    }
-
-    hideLoading() {
-        const loadingElement = document.getElementById("loading");
-        if (loadingElement) {
-            loadingElement.style.display = "none";
-        }
-    }
-
-    // animate() {
-    //     requestAnimationFrame(this.animate.bind(this));
-
-    //     const currentTime = Date.now();
-    //     const passtime = (currentTime - this.lastTime) / 1000; // seconds
-    //     this.lastTime = currentTime;
-
-    //     if (this.params.animate) {
-    //         const axis = this.params.rotationAxis;
-    //         const speed = this.params.rotationSpeed;
-    //         const fixtedDegree = 2 * Math.PI;
-
-    //         const rotationAngle = fixtedDegree * speed * passtime;
-
-    //         const rotationMatrixIncrement = new THREE.Matrix4();
-    //         if (axis === "x") {
-    //             rotationMatrixIncrement.makeRotationX(rotationAngle);
-    //         } else if (axis === "y") {
-    //             rotationMatrixIncrement.makeRotationY(rotationAngle);
-    //         } else if (axis === "z") {
-    //             rotationMatrixIncrement.makeRotationZ(rotationAngle);
-    //         }
-
-    //         this.params.modelMatrix.multiply(rotationMatrixIncrement);
-    //         this.volumePass.material.uniforms.modelMatrix.value.copy(this.params.modelMatrix);
-    //     }
-
-    //     this.render();
-    // }
 }

@@ -37,12 +37,17 @@ def convert(input_file, output_file):
     nrrd.write(output_file, volumeStack_trans)
 
 if __name__ == '__main__':
-    tifName = ["cell_yxz_007_006_022", "cell_yxz_008_010_005", "cell_yxz_010_011_003", "cell_yxz_015_013_008"]
+    tifName = input("Please enter the file names, separated by space: ").split(' ')
 
     
     for file in tqdm(tifName, desc="Processing files"):
-        input_folder = "../../pipeline-visualize/output/" + file + "/"
+        root_folder = os.path.dirname(os.path.abspath(__file__))
+        
+        input_folder = "output/" + file + "/"
         output_folder = "../web/public/" + file + "/"
+
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
 
         pt_files = [
                     input_folder + "origin.pt", 
