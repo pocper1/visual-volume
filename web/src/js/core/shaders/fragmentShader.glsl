@@ -28,15 +28,15 @@ vec4 add_lighting(float val, vec3 loc, vec3 step, vec3 view_ray);
 
 // distance to box bounds
 vec2 rayBoxDist( vec3 boundsMin, vec3 boundsMax, vec3 rayOrigin, vec3 rayDir ) {
-vec3 t0 = ( boundsMin - rayOrigin ) / rayDir;
-vec3 t1 = ( boundsMax - rayOrigin ) / rayDir;
-vec3 tmin = min( t0, t1 );
-vec3 tmax = max( t0, t1 );
-float distA = max( max( tmin.x, tmin.y ), tmin.z );
-float distB = min( tmax.x, min( tmax.y, tmax.z ) );
-float distToBox = max( 0.0, distA );
-float distInsideBox = max( 0.0, distB - distToBox );
-return vec2( distToBox, distInsideBox );
+    vec3 t0 = ( boundsMin - rayOrigin ) / rayDir;
+    vec3 t1 = ( boundsMax - rayOrigin ) / rayDir;
+    vec3 tmin = min( t0, t1 );
+    vec3 tmax = max( t0, t1 );
+    float distA = max( max( tmin.x, tmin.y ), tmin.z );
+    float distB = min( tmax.x, min( tmax.y, tmax.z ) );
+    float distToBox = max( 0.0, distA );
+    float distInsideBox = max( 0.0, distB - distToBox );
+    return vec2( distToBox, distInsideBox );
 }
 
 void main() {
@@ -100,14 +100,14 @@ void main() {
         
         else if (abs(dis_vec.y - 2.0) < threshold || abs(dis_vec.y - 0.0) < threshold ) {
             vec3 uvy = vec3(uv.x, depth, uv.z);  // slice y
-            v = texture(volumeTex, uvy).r; // 對齊 y 時顯示這個
+            v = texture(volumeTex, uvy).r; // 對齊 y
             volumeColor = vec4(v, v, v, 1.0);
 
             gl_FragColor = volumeColor;
             return;
         } else if (abs(dis_vec.x - 2.0) < threshold || abs(dis_vec.x - 0.0) < threshold ) {
             vec3 uvx = vec3(depth, uv.y, uv.z);  // slice x
-            v = texture(volumeTex, uvx).r; // 對齊 x 時顯示這個
+            v = texture(volumeTex, uvx).r; // 對齊 x
             volumeColor = vec4(v, v, v, 1.0);
 
             gl_FragColor = volumeColor;

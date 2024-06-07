@@ -8,23 +8,17 @@ def convert(input_file, output_file):
     print(f"Converting {input_file} to {output_file}")
     data = torch.load(input_file)
     volumeStack = data.numpy()
-    print(volumeStack.shape)
-
 
     if volumeStack.ndim == 3:
         volumeStack_trans = np.transpose(volumeStack, (2, 1, 0)).astype(np.float32)
-    # 處理 4 維數據，將 RGB / 3 轉為 3 維數據
     elif volumeStack.ndim == 4 and volumeStack.shape[-1] == 3:
-        # 將 RGB 值平均以獲取灰度值
-        # print("Original last dimension:", volumeStack[:, :, :, -1])
-        print("volumestack:" + str(volumeStack.shape))
-        volumeStack_gray = np.mean(volumeStack, axis=-1)
+        volumeStack_gray = np.mean(volumeStack, axis=-1) # mean the rgb color, and flatten into 3 dimension
         volumeStack_trans = np.transpose(volumeStack_gray, (2, 1, 0)).astype(np.float32)
 
-    # 檢查數據中是否有無效值並進行替換
+    # cech if there is any nan value in the volume
     volumeStack_trans = np.nan_to_num(volumeStack_trans, nan=0.0, posinf=0.0, neginf=0.0)
 
-    # 檢查數據範圍並進行標準化
+    # normalize the volume to 0-255
     min_val = volumeStack_trans.min()
     max_val = volumeStack_trans.max()
     if max_val - min_val == 0:
@@ -37,32 +31,29 @@ def convert(input_file, output_file):
     nrrd.write(output_file, volumeStack_trans)
 
 if __name__ == '__main__':
-    tifName = input("Please enter the file names, separated by space: ").split(' ')
-
+    dataset_dir = 'dataset'
     
-    for file in tqdm(tifName, desc="Processing files"):
-        root_folder = os.path.dirname(os.path.abspath(__file__))
+    # Get all the folders in the dataset directory
+    folders = [f for f in os.listdir(dataset_dir) if os.path.isdir(os.path.join(dataset_dir, f))]
+    print("Found the following folders in the dataset directory:")
+    for folder in folders:
+        print(folder, end=", ")
+    
+    for folder in tqdm(folders, desc="Processing folders"):
+        folder_path = os.path.join(dataset_dir, folder)
         
-        input_folder = "output/" + file + "/"
-        output_folder = "../web/public/" + file + "/"
+        input_folder = os.path.join(folder_path)
+        output_folder = os.path.join("..", "web", "public", folder)
 
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
-        pt_files = [
-                    input_folder + "origin.pt", 
-                    input_folder + "sobel_vectors.pt", 
-                    input_folder + "vector_conv.pt", 
-                    input_folder + "first_derivative.pt", 
-                    input_folder + "second_derivative.pt", 
-                    input_folder + "blurred_volume.pt", 
-                    input_folder + "adjusted_vectors.pt", 
-                    input_folder + "adjusted_vectors_interp.pt", 
-                    input_folder + "sobel_vectors_subsampled.pt",
-                    input_folder + "mask_recto.pt",
-                    input_folder + "mask_verso.pt"
-                ]
+        base_files = ["origin", "sobel_vectors",  "vector_conv",  "first_derivative",  "second_derivative",  "blurred_volume",  "adjusted_vectors",  "adjusted_vectors_interp",  "sobel_vectors_subsampled", "mask_recto", "mask_verso"]
+
+        pt_files = [f"{file}.pt" for file in base_files]
         
-        for input_file in tqdm(pt_files, desc=f"Processing {file}"):
-            output_file = output_folder + os.path.basename(input_file).replace(".pt", ".nrrd")
-            convert(input_file, output_file)
+        for pt_file in tqdm(pt_files, desc=f"Processing {folder}"):
+            input_file = os.path.join(input_folder, pt_file)
+            output_file = os.path.join(output_folder, os.path.basename(pt_file).replace(".pt", ".nrrd"))
+            if os.path.exists(input_file):  # Check if the input file exists
+                convert(input_file, output_file)
