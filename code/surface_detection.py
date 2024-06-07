@@ -492,8 +492,12 @@ def get_corner_coords(start_point, cell_block_name):
     return corner_coords
 
 if __name__ == '__main__':
-    if not os.path.exists('output'): os.makedirs('output')
+
     args = sys.argv
+
+    if not os.path.exists(args[1]):
+        os.makedirs(args[1])
+
 
     # Check file path
     if len(args) < 2 or not args[1].endswith(".tif"):
