@@ -9,7 +9,7 @@ uniform int colorMode;
 
 uniform sampler3D volumeTex;
 uniform sampler2D cmdata;
-uniform mat4 projectionInverse; // 需要熟悉 camera 滑動相機時候，決定是在哪一個軸
+uniform mat4 projectionInverse;
 uniform mat4 sdfTransformInverse;
 
 const float relative_step_size = 1.0;
@@ -38,9 +38,6 @@ return vec2( distToBox, distInsideBox );
 
 void main() {
     float fragCoordZ = -1.;
-
-    // float v = texture(volumeTex, vec3( vUv, 0.0 )).r;
-    // gl_FragColor = vec4(v, v, v, 1.0); return; // 第零層、滑鼠滾輪控制，直接渲染在方形上面
 
     // get the inverse of the sdf box transform
     mat4 sdfTransform = inverse( sdfTransformInverse );
@@ -72,12 +69,10 @@ void main() {
         // gl_FragColor = vec4(0.0, float(nsteps) / size.x, 1.0, 1.0);
         // return;
 
-        // redundent
         vec4 boxNearPoint = vec4( sdfRayOrigin + sdfRayDirection * ( distToBox + 1e-5 ), 1.0 );
         vec4 boxFarPoint = vec4( sdfRayOrigin + sdfRayDirection * ( distToBox + distInsideBox - 1e-5 ), 1.0 );
         vec3 pn = (sdfTransform * boxNearPoint).xyz;
         vec3 pf = (sdfTransform * boxFarPoint).xyz;
-        // redundent
 
         vec3 uv = (sdfTransformInverse * vec4(pn, 1.0)).xyz + vec3( 0.5 );
         vec4 volumeColor;
