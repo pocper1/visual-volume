@@ -42,7 +42,7 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
     npm install
     ```
 
-## processing guideline
+## Process guideline
 
 1. Data collection, download the dataset [PHercParis4.volpkg](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/)
 2. Transform CT-scan into pt
@@ -54,7 +54,7 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
 4. Use WebGL to show the result
     - location: `web/`
 
-### processing detail
+### Process detail
 
 1. Data collection
    Note: You need to sign up for the [Vesuvius Challenge Data Agreement](https://docs.google.com/forms/d/e/1FAIpQLSf2lCOCwnO1xo0bc1QdlL0a034Uoe7zyjYBY2k33ZHslHE38Q/viewform). Once registered, you will be granted a username and password to access the dataset.
@@ -85,7 +85,7 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
     npm run dev
     ```
 
-### file structure
+### File structure
 
 ```
 .
