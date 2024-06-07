@@ -31,7 +31,6 @@ function updateGUI(viewer) {
     const fileSystem = gui.addFolder("File System");
     const background = gui.addFolder("Background Color");
     const object = gui.addFolder("Object");
-    // const animation = gui.addFolder("Animation");
 
     // =====================================BACKGROUND======================================================
     background
@@ -54,41 +53,13 @@ function updateGUI(viewer) {
             viewer.render();
         });
 
-    // animation
-    //     .add(viewer.params, "animate")
-    //     .name("Animate")
-    //     .onChange(function (value) {
-    //         viewer.params.animate = value;
-    //         viewer.render();
-    //     });
-
-    // animation
-    //     .add(viewer.params, "rotationSpeed", 0, 1)
-    //     .step(0.1)
-    //     .name("Rotation Speed")
-    //     .onChange(function (value) {
-    //         viewer.params.rotationSpeed = value;
-    //         viewer.render();
-    //     });
-
-    // animation
-    //     .add(viewer.params, "rotationAxis", ["x", "y", "z"])
-    //     .name("Rotation Axis")
-    //     .onChange(function (value) {
-    //         viewer.params.rotationAxis = value;
-    //         viewer.render();
-    //     });
-
     // =====================================FILE SYSTEM======================================================
 
     fileSystem
         .add(viewer.params, "tifName", tifName)
         .name("tifName")
         .onChange(async function (value) {
-            //載入新檔案
             await viewer.sdfTexGenerate(value);
-
-            // 重新渲染
             viewer.render();
         });
 
@@ -96,10 +67,7 @@ function updateGUI(viewer) {
         .add(viewer.params, "functionName", functionName)
         .name("functionName")
         .onChange(async function (functionName) {
-            //載入新檔案
             await viewer.sdfTexGenerate(functionName);
-
-            // 重新渲染
             viewer.render();
         });
 }
