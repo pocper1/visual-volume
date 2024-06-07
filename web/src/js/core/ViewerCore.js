@@ -5,8 +5,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { NRRDLoader } from "three/examples/jsm/loaders/NRRDLoader";
 import textureViridis from "./textures/cm_viridis.png";
 
-let dis;
-
 export default class ViewerCore {
     constructor({ renderer, canvas }) {
         this.canvas = canvas;
@@ -14,27 +12,22 @@ export default class ViewerCore {
         this.render = this.render.bind(this);
 
         this.inverseBoundsMatrix = new THREE.Matrix4();
-        this.volumePass = new FullScreenQuad(new VolumeMaterial()); // full screen quad 佔滿頁面的四邊形
+        this.volumePass = new FullScreenQuad(new VolumeMaterial()); // full screen quad with volume material
         // this.cube = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 1.0), new THREE.MeshBasicMaterial());
         this.cmtextures = { viridis: new THREE.TextureLoader().load(textureViridis) };
 
         this.params = {};
-
         this.params.colorful = true;
-
         this.params.tifName = "cell_yxz_006_008_004"; // fileName
         this.params.functionName = "origin";
-
         this.params.backgroundColor = "#000000";
-        this.params.colorMode = 0; // 預設顏色顯示模式
+        this.params.colorMode = 0; // Color mode: Origin: 0, "RGB to BGR": 1, "reverse color": 2, "gray scale": 3, "Hue Rotation": 4, "Contrast Enhancement": 5 })
 
         this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;
         this.init();
     }
 
     async init() {
-        this.showLoading();
-
         // scene setup
         this.scene = new THREE.Scene();
         // this.scene.add(this.cube);
@@ -88,13 +81,9 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
 
         await this.sdfTexGenerate();
-        this.hideLoading();
-        // this.animate();
     }
 
     async sdfTexGenerate() {
-        this.showLoading();
-
         const safePath = this.safeJoin(this.params.tifName, this.params.functionName + ".nrrd");
         const volume = await new NRRDLoader().loadAsync(safePath);
 
@@ -123,11 +112,6 @@ export default class ViewerCore {
         this.render();
     }
 
-    getFunctionIndex(name) {
-        const input_files = ["Normal", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
-        return input_files.indexOf(name);
-    }
-
     safeJoin(base, target) {
         return base + "/" + target.replace(/^\//, "");
     }
@@ -141,6 +125,7 @@ export default class ViewerCore {
         let xComponent = this.camera.matrixWorld["elements"][8];
         let yComponent = this.camera.matrixWorld["elements"][9];
         let zComponent = this.camera.matrixWorld["elements"][10];
+        
         let dis = new THREE.Vector3(xComponent, yComponent, zComponent);
         let dis_vec_x = dis.distanceTo(new THREE.Vector3(1, 0, 0));
         let dis_vec_y = dis.distanceTo(new THREE.Vector3(0, 1, 0));

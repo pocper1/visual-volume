@@ -20,10 +20,8 @@ export class VolumeMaterial extends ShaderMaterial {
                 sdfTransformInverse: { value: new Matrix4() },
                 colorful: { value: true },
                 colorMode: { value: 0 },
-                // rotationMatrix: { value: new Matrix4() },
-                // modelMatrix: { value: new Matrix4() },
-                axis: { value: 0 }, // 新增 axis uniform
-                depth: { value: 0.5 }, // 新增 depth uniform
+                axis: { value: 0 },
+                depth: { value: 0.5 },
                 displayMode: { value: 0 },
                 dis_vec: { value: new Vector3()  },
                 

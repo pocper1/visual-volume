@@ -1,22 +1,7 @@
 # Ｖisual volume
 
-以下是一個簡單的 README 範本，根據你的 repo 生成的：
+![demo](demo/visual-volume-demo.gif)
 
-Visual Volume
-
-Visual Volume 是一個用於視覺化體積數據的項目。本項目利用 Web 技術（如 Three.js 和 WebGL）來渲染和展示來自 CT 掃描或其他來源的三維體積數據。
-
-功能
-
-	•	加載和解析 VTK 和 NRRD 文件
-	•	進行體積數據的渲染和顯示
-	•	支持多種視覺化模式，如等值面和體繪製
-	•	交互功能，允許用戶調整視角和視覺參數
-
-安裝
-
-	1.	克隆這個 repo：
-    
 ## Introduction
 
 Visual Volume is a project designed for visualizing volumetric data. This project leverages web technologies such as Three.js and WebGL to render and display three-dimensional volumetric data from sources like CT scans.
@@ -45,7 +30,7 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
     ```
 2. Install the dependency
     ```bash
-    pip install numpy torch tifffile scipy open3d opencv-python
+    pip install numpy torch tifffile scipy open3d opencv-python pynrrd tqdm
     ```
 3. Init the web project
     ```bash
@@ -82,20 +67,71 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
 
 2. CT-scan transform into pt
 
+    > write data into `/dataset/<name>/*`
+
     ```bash
-    python3 code/surface_detection.py dataset/cell_yxz_006_008_004.tif
+    python code/surface_detection.py dataset/cell_yxz_006_008_004.tif
     ```
 
 3. Transform into nrrd
+    > read data from `/dataset/<name>/*`, write data into `/web/public/<name>/*`
     ```bash
-    visual-volume
-    python3 code/pt_nrrd.py dataset/cell_yxz_006_008_004.tif
+    python code/pt_nrrd.py
     ```
 4. Use web to show the result
     ```bash
     cd /web
     npm run dev
     ```
+
+### file structure
+
+```
+.
+├── code
+│   ├── nrrd_tools.py
+│   ├── pt_nrrd.py
+│   ├── surface_detection.py
+│   └── umbilicus.txt
+├── dataset
+├── README.md
+├── umbilicus.txt
+└── web
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    ├── public
+    │   ├── cell_yxz_006_008_004
+    │   │   ├── adjusted_vectors_interp.nrrd
+    │   │   ├── adjusted_vectors.nrrd
+    │   │   ├── blurred_volume.nrrd
+    │   │   ├── first_derivative.nrrd
+    │   │   ├── mask_recto.nrrd
+    │   │   ├── mask_verso.nrrd
+    │   │   ├── origin.nrrd
+    │   │   ├── second_derivative.nrrd
+    │   │   ├── sobel_vectors.nrrd
+    │   │   ├── sobel_vectors_subsampled.nrrd
+    │   │   └── vector_conv.nrrd
+    ├── src
+    │   ├── css
+    │   │   └── main.css
+    │   ├── img
+    │   │   └── favicon.ico
+    │   └── js
+    │       ├── config.js
+    │       ├── core
+    │       │   ├── shaders
+    │       │   │   ├── fragmentShader.glsl
+    │       │   │   └── vertexShader.glsl
+    │       │   ├── textures
+    │       │   │   └── cm_viridis.png
+    │       │   ├── ViewerCore.js
+    │       │   └── VolumeMaterial.js
+    │       ├── main.js
+    │       └── volume.js
+    └── vite.config.js
+```
 
 ## Reference
 

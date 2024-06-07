@@ -40,8 +40,8 @@ def save_ply(recto_tensor_tuple, verso_tensor_tuple, corner_coords, grid_block_s
     points_v = points_v_tensor.cpu().numpy()
     normals_v = normals_v_tensor.cpu().numpy()
 
-    save_template_v = "output/point_cloud_recto/" + "cell_yxz_{:03}_{:03}_{:03}.ply"
-    save_template_r = "output/point_cloud_verso/" + "cell_yxz_{:03}_{:03}_{:03}.ply"
+    save_template_v = output_dir+"/point_cloud_recto/" + "cell_yxz_{:03}_{:03}_{:03}.ply"
+    save_template_r = output_dir+ "/point_cloud_verso/" + "cell_yxz_{:03}_{:03}_{:03}.ply"
 
     file_x, file_y, file_z = corner_coords[0]//grid_block_size[0], corner_coords[1]//grid_block_size[1], corner_coords[2]//grid_block_size[2]
     surface_ply_filename_v = save_template_v.format(file_x, file_y, file_z)
@@ -343,33 +343,33 @@ def surface_detection(volume, global_reference_vector, blur_size=3, sobel_chunks
     # Blur the volume
     blur = uniform_blur3d(channels=1, size=blur_size, device=device)
     blurred_volume = blur(volume.unsqueeze(0).unsqueeze(0)).squeeze(0).squeeze(0)
-    torch.save(blurred_volume, 'output/blurred_volume.pt')
+    torch.save(blurred_volume, output_dir+'/blurred_volume.pt')
     print('Blur ', '({}, {}, {})'.format(*blurred_volume.shape))
 
     # Apply Sobel filter to the blurred volume
     sobel_vectors = sobel_filter_3d(volume, chunks=sobel_chunks, overlap=sobel_overlap, device=device)
-    torch.save(sobel_vectors, 'output/sobel_vectors.pt')
+    torch.save(sobel_vectors, output_dir+ '/sobel_vectors.pt')
     print('Sobel ', '({}, {}, {})'.format(*sobel_vectors.shape))
 
     # Subsample the sobel_vectors
     sobel_stride = 10
     sobel_vectors_subsampled = sobel_vectors[::sobel_stride, ::sobel_stride, ::sobel_stride, :]
-    torch.save(sobel_vectors_subsampled, 'output/sobel_vectors_subsampled.pt')
+    torch.save(sobel_vectors_subsampled, output_dir+ '/sobel_vectors_subsampled.pt')
     print('Sobel Sampling ', '({}, {}, {})'.format(*sobel_vectors_subsampled.shape))
 
     # Apply vector convolution to the Sobel vectors
     vector_conv = vector_convolution(sobel_vectors_subsampled, window_size=window_size, stride=stride, device=device)
-    torch.save(vector_conv, 'output/vector_conv.pt')
+    torch.save(vector_conv, output_dir + '/vector_conv.pt')
     print('Sobel Vector Convolution ', '({}, {}, {})'.format(*vector_conv.shape))
 
     # Adjust vectors to the global direction
     adjusted_vectors = adjust_vectors_to_global_direction(vector_conv, global_reference_vector)
-    torch.save(adjusted_vectors, 'output/adjusted_vectors.pt')
+    torch.save(adjusted_vectors, output_dir + '/adjusted_vectors.pt')
     print('Adjust to Global Direction ', '({}, {}, {})'.format(*adjusted_vectors.shape))
 
     # Interpolate the adjusted vectors to the original size
     adjusted_vectors_interp = interpolate_to_original(sobel_vectors, adjusted_vectors)
-    torch.save(adjusted_vectors_interp, 'output/adjusted_vectors_interp.pt')
+    torch.save(adjusted_vectors_interp, output_dir + '/adjusted_vectors_interp.pt')
     print('Adjust to Original Size ', '({}, {}, {})'.format(*adjusted_vectors_interp.shape))
 
     # Project the Sobel result onto the adjusted vectors and calculate the norm
@@ -377,21 +377,21 @@ def surface_detection(volume, global_reference_vector, blur_size=3, sobel_chunks
     fshape = first_derivative.shape
     
     first_derivative = scale_to_0_1(first_derivative)
-    torch.save(first_derivative, 'output/first_derivative.pt')
+    torch.save(first_derivative, output_dir + '/first_derivative.pt')
     print('First Derivative ', '({}, {}, {})'.format(*first_derivative.shape))
 
     # Apply Sobel filter to the first derivative, project it onto the adjusted vectors, and calculate the norm
     sobel_vectors_derivative = sobel_filter_3d(first_derivative, chunks=sobel_chunks, overlap=sobel_overlap, device=device)
     second_derivative = adjusted_norm(sobel_vectors_derivative, adjusted_vectors_interp)
     second_derivative = scale_to_0_1(second_derivative)
-    torch.save(second_derivative, 'output/second_derivative.pt')
+    torch.save(second_derivative, output_dir + 'second_derivative.pt')
     print('Second Derivative ', '({}, {}, {})'.format(*second_derivative.shape))
 
     # Generate recto side of sheet
 
     # Create a mask for the conditions on the first and second derivatives
     mask_recto = (second_derivative.abs() < threshold_der2) & (first_derivative > threshold_der)
-    torch.save(mask_recto, 'output/mask_recto.pt')
+    torch.save(mask_recto, output_dir + '/mask_recto.pt')
     print('Mask of Recto ', '({}, {}, {})'.format(*mask_recto.shape))
     # Check where the second derivative is zero and the first derivative is above a threshold
     points_to_mark = torch.where(mask_recto)
@@ -408,7 +408,7 @@ def surface_detection(volume, global_reference_vector, blur_size=3, sobel_chunks
     # Generate verso side of sheet
     # Create a mask for the conditions on the first and second derivatives
     mask_verso = (second_derivative.abs() < threshold_der2) & (first_derivative < -threshold_der)
-    torch.save(mask_verso, 'output/mask_verso.pt')
+    torch.save(mask_verso, output_dir + '/mask_verso.pt')
     print('Mask of Verso ', '({}, {}, {})'.format(*mask_verso.shape))
     # Check where the second derivative is zero and the first derivative is above a threshold
     points_to_mark_verso = torch.where(mask_verso)
@@ -494,15 +494,16 @@ def get_corner_coords(start_point, cell_block_name):
 if __name__ == '__main__':
 
     args = sys.argv
-
-    if not os.path.exists(args[1]):
-        os.makedirs(args[1])
-
-
+    print(args)
     # Check file path
     if len(args) < 2 or not args[1].endswith(".tif"):
         raise ValueError('TIFF path is not found')
         sys.exit(1)
+
+    # Create output directory
+    output_dir = 'dataset/' + os.path.splitext(os.path.basename(sys.argv[1]))[0]
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     # Region you want to see (z, y, x)
     start_point = (0, 0, 0)
@@ -517,7 +518,7 @@ if __name__ == '__main__':
     volume = volume[sz:sz+bz, sy:sy+by, sx:sx+bx]
     # Save the volume
     volume = np.uint8(volume//256)
-    tifffile.imwrite('output/origin.tif', volume)
+    tifffile.imwrite(output_dir+'/origin.tif', volume)
     # Convert to float32 tensor
     volume = torch.from_numpy(volume).float()
 
