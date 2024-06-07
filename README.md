@@ -1,10 +1,18 @@
-# Ｖisual volume
+# Ｖ isual volume
 
-![demo](demo/visual-volume-demo.gif)
+<p align="center">
+    <img src="demo/visual-volume-demo.gif" alt="demo">
+</p>
 
 ## Introduction
 
 Visual Volume is a project designed for visualizing volumetric data. This project leverages web technologies such as Three.js and WebGL to render and display three-dimensional volumetric data from sources like CT scans.
+
+### Purpose
+
+The purpose of this project is to visualize the CT scan data of the [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor) project into a point cloud. Through this tool, we aim to improve the accuracy of data conversion.
+
+This project is an extension based on the GitHub repository: [tomhsiao1260/pipeline-visualize](https://github.com/tomhsiao1260/pipeline-visualize).
 
 ### Features
 
@@ -42,20 +50,18 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
 
 1. Data collection, download the dataset [PHercParis4.volpkg](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/)
 2. Transform CT-scan into pt
-    - ile format: tif->pt
+    - file format: tif->pt
     - location: `code/surface_detection.py`
 3. Transform into nrrd
     - file format: pt->nrrd
     - location: `code/pt_nrrd.py`
 4. Use web to show the result
-    - file format: nrrd
     - location: `web/`
 
 ### processing detail
 
 1. Data collection
-
-    > note: you need to sign up, and then you can get the <userName> and <password>
+   Note: You need to sign up for the [Vesuvius Challenge Data Agreement](https://docs.google.com/forms/d/e/1FAIpQLSf2lCOCwnO1xo0bc1QdlL0a034Uoe7zyjYBY2k33ZHslHE38Q/viewform). Once registered, you will be granted a username and password to access the dataset.
 
     ```bash
     cd visual-volume
@@ -66,15 +72,14 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
     ```
 
 2. CT-scan transform into pt
-
-    > write data into `/dataset/<name>/*`
+   write data into `/dataset/<tifName>/*`
 
     ```bash
     python code/surface_detection.py dataset/cell_yxz_006_008_004.tif
     ```
 
 3. Transform into nrrd
-    > read data from `/dataset/<name>/*`, write data into `/web/public/<name>/*`
+   read data from `/dataset/<tifName>/*`, write data into `/web/public/<tifName>/*`
     ```bash
     python code/pt_nrrd.py
     ```
@@ -132,8 +137,3 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
     │       └── volume.js
     └── vite.config.js
 ```
-
-## Reference
-
-1. Github repo: [tomhsiao1260/pipeline-visualize](https://github.com/tomhsiao1260/pipeline-visualize)
-2. Github repo: [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor)
