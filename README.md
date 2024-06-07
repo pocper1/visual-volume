@@ -1,4 +1,4 @@
-# Ｖ isual volume
+# visual-volume
 
 <p align="center">
     <img src="demo/visual-volume-demo.gif" alt="demo">
