@@ -16,14 +16,10 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
 
 ### Features
 
--   Load and parse VTK and NRRD files
+-   Load and parse NRRD files
 -   Render and display volumetric data
 -   Support for various visualization modes such as isosurfaces and volume rendering
 -   Interactive features allowing users to adjust the view and visualization parameters
-
-### Dataset
-
-The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/). You need to sign up to access and use the dataset.
 
 ### Tech stack
 
@@ -55,7 +51,7 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
 3. Transform into nrrd
     - file format: pt->nrrd
     - location: `code/pt_nrrd.py`
-4. Use web to show the result
+4. Use WebGL to show the result
     - location: `web/`
 
 ### processing detail
