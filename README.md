@@ -1,5 +1,4 @@
-# Vesuvius Challenge 3D visualization
-> 1122 台大計算機圖形 期末專案
+# Ｖisual volume
 
 以下是一個簡單的 README 範本，根據你的 repo 生成的：
 
@@ -19,35 +18,86 @@ Visual Volume 是一個用於視覺化體積數據的項目。本項目利用 We
 	1.	克隆這個 repo：
     
 ## Introduction
-1. [Vesuvius Challenge](https://scrollprize.org/)
-```
-wget --no-parent -r --user=<user name> --password=<password> https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/cell_yxz_006_008_004.tif
 
-```
+Visual Volume is a project designed for visualizing volumetric data. This project leverages web technologies such as Three.js and WebGL to render and display three-dimensional volumetric data from sources like CT scans.
 
-```
-python3 surface_detection.py cell_yxz_001_001_002.tif
-```
-## Tech
-> WEBGL, Three.js, visualization
-1. [Three.js](https://threejs.org/)
-2. github repo:  [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor)
+### Features
 
-## Steps
-1. clone this repo
-    ```bash=
+-   Load and parse VTK and NRRD files
+-   Render and display volumetric data
+-   Support for various visualization modes such as isosurfaces and volume rendering
+-   Interactive features allowing users to adjust the view and visualization parameters
+
+### Dataset
+
+The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/). You need to sign up to access and use the dataset.
+
+### Tech stack
+
+-   three.js
+-   python
+
+## Setup
+
+1. Clone this repo
+    ```bash
     git clone https://github.com/pocper1/visual-volume.git
-    cd Web
     ```
-2. install dependency, `npm install`
-3. Download datasets from Vesuvius Challenge, and put into Dataset
-4. build up, `npm run dev`
+2. Install the dependency
+    ```bash
+    pip install numpy torch tifffile scipy open3d opencv-python
+    ```
+3. Init the web project
+    ```bash
+    cd web
+    npm install
+    ```
 
-## notes
-1. transform_obj from origin.tif to origin.obj
+## processing guideline
 
+1. Data collection, download the dataset [PHercParis4.volpkg](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/)
+2. Transform CT-scan into pt
+    - ile format: tif->pt
+    - location: `code/surface_detection.py`
+3. Transform into nrrd
+    - file format: pt->nrrd
+    - location: `code/pt_nrrd.py`
+4. Use web to show the result
+    - file format: nrrd
+    - location: `web/`
+
+### processing detail
+
+1. Data collection
+
+    > note: you need to sign up, and then you can get the <userName> and <password>
+
+    ```bash
+    cd visual-volume
+    ```
+
+    ```bash
+    wget --no-parent -r -nd --user=<userName> --password=<password> -P dataset https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/volume_grids/20230205180739/cell_yxz_006_008_004.tif
+    ```
+
+2. CT-scan transform into pt
+
+    ```bash
+    python3 code/surface_detection.py dataset/cell_yxz_006_008_004.tif
+    ```
+
+3. Transform into nrrd
+    ```bash
+    visual-volume
+    python3 code/pt_nrrd.py dataset/cell_yxz_006_008_004.tif
+    ```
+4. Use web to show the result
+    ```bash
+    cd /web
+    npm run dev
+    ```
 
 ## Reference
-1. [Volume Shader](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/shaders/VolumeShader.js)
-2. Github repo: [tomhsiao1260/pipeline-visualize](https://github.com/tomhsiao1260/pipeline-visualize)
-3. Github repo: [tomhsiao1260/vc-cell](https://github.com/tomhsiao1260/vc-cell)
+
+1. Github repo: [tomhsiao1260/pipeline-visualize](https://github.com/tomhsiao1260/pipeline-visualize)
+2. Github repo: [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor)
