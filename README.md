@@ -79,7 +79,7 @@ The dataset source is from [PHercParis4.volpkg](https://dl.ash2txt.org/full-scro
     ```
 
 3. Transform into nrrd
-   read data from `/dataset/<tifName>/*`, write data into `/web/public/<tifName>/*`
+   read data from `/dataset/<tifName>/*` and write data into `/web/public/<tifName>/*`
     ```bash
     python code/pt_nrrd.py
     ```
