@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 *tif
+*.nrrd
+*.mp4
+*.pt
+/web/public/*

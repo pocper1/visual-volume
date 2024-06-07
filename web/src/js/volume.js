@@ -1,9 +1,8 @@
 import * as THREE from "three";
 import ViewerCore from "./core/ViewerCore";
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { functionName, tifName } from "./config";
 
-const functionName = ["origin", "blurred_volume", "sobel_vectors", "sobel_vectors_subsampled", "adjusted_vectors", "adjusted_vectors_interp", "first_derivative", "second_derivative", "mask_recto", "mask_verso"];
-const tifName = ["cell_yxz_006_008_004", "cell_yxz_007_006_022", "cell_yxz_008_010_005", "cell_yxz_010_011_003", "cell_yxz_015_013_008"];
 init();
 
 async function init() {
@@ -42,8 +41,6 @@ function updateGUI(viewer) {
         });
 
     // =====================================OBJECT======================================================
-    // object color
-    // object.add(viewer.params, "colorful", true).name("color").onChange(viewer.render);
 
     object
         .add(viewer.params, "colorMode", { Origin: 0, "RGB to BGR": 1, "reverse color": 2, "gray scale": 3, "Hue Rotation": 4, "Contrast Enhancement": 5 })
