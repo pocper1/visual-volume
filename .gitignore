@@ -27,5 +27,5 @@ dist-ssr
 dataset/*.tif
 
 # web dataset
-web/public/*
+web/public/*.nrrd
 !/web/public/cell_yxz_006_008_004/*
