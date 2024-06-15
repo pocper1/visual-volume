@@ -27,4 +27,3 @@ dist-ssr
 *.nrrd
 *.mp4
 *.pt
-/web/public/*

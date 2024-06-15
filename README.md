@@ -92,8 +92,7 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
 ├── code
 │   ├── nrrd_tools.py
 │   ├── pt_nrrd.py
-│   ├── surface_detection.py
-│   └── umbilicus.txt
+│   └── surface_detection.py
 ├── dataset
 ├── README.md
 ├── umbilicus.txt
@@ -102,18 +101,18 @@ This project is an extension based on the GitHub repository: [tomhsiao1260/pipel
     ├── package.json
     ├── package-lock.json
     ├── public
-    │   ├── cell_yxz_006_008_004
-    │   │   ├── adjusted_vectors_interp.nrrd
-    │   │   ├── adjusted_vectors.nrrd
-    │   │   ├── blurred_volume.nrrd
-    │   │   ├── first_derivative.nrrd
-    │   │   ├── mask_recto.nrrd
-    │   │   ├── mask_verso.nrrd
-    │   │   ├── origin.nrrd
-    │   │   ├── second_derivative.nrrd
-    │   │   ├── sobel_vectors.nrrd
-    │   │   ├── sobel_vectors_subsampled.nrrd
-    │   │   └── vector_conv.nrrd
+    │   └── cell_yxz_006_008_004
+    │       ├── adjusted_vectors_interp.nrrd
+    │       ├── adjusted_vectors.nrrd
+    │       ├── blurred_volume.nrrd
+    │       ├── first_derivative.nrrd
+    │       ├── mask_recto.nrrd
+    │       ├── mask_verso.nrrd
+    │       ├── origin.nrrd
+    │       ├── second_derivative.nrrd
+    │       ├── sobel_vectors.nrrd
+    │       ├── sobel_vectors_subsampled.nrrd
+    │       └── vector_conv.nrrd
     ├── src
     │   ├── css
     │   │   └── main.css
