@@ -3,6 +3,8 @@ import { VolumeMaterial } from "./VolumeMaterial";
 import { FullScreenQuad } from "three/examples/jsm/postprocessing/Pass";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { NRRDLoader } from "three/examples/jsm/loaders/NRRDLoader";
+import { AxesHelper, GridHelper } from "three";
+
 import textureViridis from "./textures/cm_viridis.png";
 
 export default class ViewerCore {
@@ -30,13 +32,15 @@ export default class ViewerCore {
     async init() {
         // scene setup
         this.scene = new THREE.Scene();
-        // this.scene.add(this.cube);
+
+        const axesHelper = new THREE.AxesHelper(5);
+        this.scene.add(axesHelper);
 
         // camera setup
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 50);
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
         this.camera.position.copy(new THREE.Vector3(0, 0, -1).multiplyScalar(1.0));
         this.camera.up.set(0, -1, 0);
-        this.camera.far = 5;
+        this.camera.far = 100;
         this.camera.updateProjectionMatrix();
 
         window.addEventListener(
@@ -69,7 +73,6 @@ export default class ViewerCore {
         document.addEventListener("wheel", event => {
             const delta = event.deltaY * 0.001;
             this.volumePass.material.uniforms.depth.value = THREE.MathUtils.clamp(this.volumePass.material.uniforms.depth.value + delta, 0, 1);
-            console.log("depth: " + this.volumePass.material.uniforms.depth.value);
             this.render();
         });
 
@@ -109,6 +112,12 @@ export default class ViewerCore {
         this.volumePass.material.uniforms.volumeTex.value = volumeTex;
         this.volumePass.material.uniforms.size.value.set(w, h, d);
         this.volumePass.material.uniforms.cmdata.value = this.cmtextures.viridis;
+
+        const size = 10;
+        const divisions = 10;
+        const gridHelper = new THREE.GridHelper(size, divisions, 0xff0000, 0xffffff);
+        this.scene.add(gridHelper);
+
         this.render();
     }
 
@@ -125,14 +134,13 @@ export default class ViewerCore {
         let xComponent = this.camera.matrixWorld["elements"][8];
         let yComponent = this.camera.matrixWorld["elements"][9];
         let zComponent = this.camera.matrixWorld["elements"][10];
-        
+
         let dis = new THREE.Vector3(xComponent, yComponent, zComponent);
         let dis_vec_x = dis.distanceTo(new THREE.Vector3(1, 0, 0));
         let dis_vec_y = dis.distanceTo(new THREE.Vector3(0, 1, 0));
         let dis_vec_z = dis.distanceTo(new THREE.Vector3(0, 0, 1));
 
         let dis_vec = new THREE.Vector3(dis_vec_x, dis_vec_y, dis_vec_z);
-        console.log(dis_vec);
 
         this.volumePass.material.uniforms.colorful.value = this.params.colorful;
         this.volumePass.material.uniforms.colorMode.value = this.params.colorMode;

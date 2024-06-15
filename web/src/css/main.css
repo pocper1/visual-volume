@@ -1,31 +1,95 @@
-html,
 body {
-    padding: 0;
     margin: 0;
-    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+    font-size: 14px;
+    line-height: 2em;
+    overscroll-behavior: none;
     font-family: monospace;
-    background-color: black;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.loading-icon {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
+a {
+    color: #ff0;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+#info {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none; /* 隱藏 loading icon */
+    top: 0px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+    z-index: 1;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+a,
+button,
+input,
+select {
+    pointer-events: auto;
 }
-canvas {
-    width: 100%;
-    height: 100%;
+
+.lil-gui {
+    z-index: 2 !important;
+}
+
+.github {
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+    z-index: 10;
+    color: white;
+}
+
+#descriptions-container {
+    position: absolute;
+    width: 600px; 
+    height: 35em;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 16px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    line-height: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.continue-text {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0; 
+}
+
+@media (max-width: 768px) {
+    #descriptions-container {
+        width: 90%; 
+        height: auto; 
+        font-size: 12px;
+        padding: 10px; 
+    }
 }

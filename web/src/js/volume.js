@@ -11,22 +11,39 @@ async function init() {
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(1, 1);
+    renderer.setClearColor(0x000000);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    document.addEventListener("DOMContentLoaded", functionDescription);
 
     const viewer = new ViewerCore({ renderer, canvas });
 
     update(viewer);
 }
 
+function functionDescription() {
+    const container = document.getElementById("descriptions-container");
+
+    if (!window.keydownEventSet) {
+        document.addEventListener("keydown", function () {
+            var descriptionsContainer = document.getElementById("descriptions-container");
+            if (descriptionsContainer) {
+                descriptionsContainer.style.display = "none";
+            }
+        });
+        window.keydownEventSet = true;
+    }
+}
 function update(viewer) {
     viewer.render();
     updateGUI(viewer);
-    console.log(viewer.params);
 }
 
 function updateGUI(viewer) {
     const gui = new GUI();
+
+    gui.title("Control panel");
+
     const fileSystem = gui.addFolder("File System");
     const background = gui.addFolder("Background Color");
     const object = gui.addFolder("Object");
