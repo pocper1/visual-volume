@@ -8,6 +8,8 @@
 
 Visual Volume is a project designed for visualizing volumetric data. This project leverages web technologies such as Three.js and WebGL to render and display three-dimensional volumetric data from sources like CT scans.
 
+You can view the project live at [https://visual-volume.vercel.app](https://visual-volume.vercel.app).
+
 ### Purpose
 
 The purpose of this project is to visualize the CT scan data of the [ThaumatoAnakalyptor](https://github.com/schillij95/ThaumatoAnakalyptor) project into a point cloud. Through this tool, we aim to improve the accuracy of data conversion.
