@@ -23,7 +23,18 @@ dist-ssr
 *.sln
 *.sw?
 
-*tif
-*.nrrd
-*.mp4
-*.pt
+# origin dataset
+dataset/*.tif
+
+# web dataset
+web/public/*
+!/web/public/adjusted_vectors_interp.nrrd
+!/web/public/adjusted_vectors.nrrd
+!/web/public/blurred_volume.nrrd
+!/web/public/first_derivative.nrrd
+!/web/public/mask_recto.nrrd
+!/web/public/mask_verso.nrrd
+!/web/public/origin.nrrd
+!/web/public/second_derivative.nrrd
+!/web/public/sobel_vectors_subsampled.nrrd
+!/web/public/sobel_vectors.nrrd
